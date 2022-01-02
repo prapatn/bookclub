@@ -1,58 +1,63 @@
 // ignore_for_file: file_names
 
+import 'package:bookclub_application/models/users.dart';
+import 'package:bookclub_application/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class CurrentUser extends ChangeNotifier {
-  String? _uid;
-  String? _email;
-
-  String? get getUid => _uid;
-  String? get getEmail => _email;
+  OurUser? _currentUser = OurUser();
+  OurUser? get getCurrentUser => _currentUser;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<String> onStartUp()async{
+  Future<String> onStartUp() async {
     String retVal = "error";
-    try{
-      
-      User _user =  await _auth.currentUser!;
-      _uid = _user.uid;
-      _email = _user.email;
-      retVal = "success";
-    }catch(e){
-      retVal=e.toString();
+    try {
+      User? _firebaseUser =  await _auth.currentUser;
+      if (_firebaseUser != null) {
+        _currentUser = await OurDatabase().getUserInfo(_firebaseUser.uid);
+      if (_currentUser != null) {
+        retVal = "success";
+      }
+
+      }
+    } catch (e) {
+      retVal = e.toString();
       print(e);
     }
 
     return retVal;
   }
-  Future<String> signOut()async{
+
+  Future<String> signOut() async {
     String retVal = "error";
-    try{
-      
+    try {
       await _auth.signOut();
-      _uid =null;
-      _email =null;
+      _currentUser = OurUser();
       retVal = "success";
-    }catch(e){
-      retVal=e.toString();
+    } catch (e) {
+      retVal = e.toString();
       print(e);
     }
 
     return retVal;
   }
 
-
-  Future<String> signUpUser(String email, String password) async {
+  Future<String> signUpUser(
+      String email, String password, String fullName) async {
     String retVal = "error";
-
+    OurUser _user = OurUser();
     try {
       UserCredential _authResult = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
 
-      if (_authResult.user != null) {
+      _user.uid = _authResult.user!.uid;
+      _user.email = _authResult.user!.email;
+      _user.fullName = fullName;
+      String _returnStr = await OurDatabase().createUser(_user);
+      if (_returnStr == "success") {
         retVal = "success";
       }
     } catch (e) {
@@ -70,6 +75,8 @@ class CurrentUser extends ChangeNotifier {
       'https://www.googleapis.com/auth/contacts.readonly',
     ]);
 
+    OurUser _user = OurUser();
+
     try {
       GoogleSignInAccount? _googleUser = await _googleSignIn.signIn();
       GoogleSignInAuthentication _googleAuth =
@@ -79,10 +86,15 @@ class CurrentUser extends ChangeNotifier {
 
       UserCredential _authResult = await _auth.signInWithCredential(credential);
 
-      if (_authResult.user != null) {
-        _uid = _authResult.user!.uid;
-        _email = _authResult.user!.email;
+      if (_authResult.additionalUserInfo!.isNewUser) {
+        _user.uid = _authResult.user!.uid;
+        _user.email = _authResult.user!.email;
+        _user.fullName = _authResult.user!.displayName;
+        OurDatabase().createUser(_user);
+      }
 
+      _currentUser = await OurDatabase().getUserInfo(_authResult.user!.uid);
+      if (_currentUser != null) {
         retVal = "success";
       }
     } catch (e) {
@@ -99,18 +111,15 @@ class CurrentUser extends ChangeNotifier {
       UserCredential _authResult = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
 
-      if (_authResult.user != null) {
-        _uid = _authResult.user!.uid;
-        _email = _authResult.user!.email;
-
+    _currentUser = await OurDatabase().getUserInfo(_authResult.user!.uid);
+      if (_currentUser != null) {
         retVal = "success";
       }
+
     } catch (e) {
       retVal = e.toString();
     }
 
     return retVal;
   }
-
- 
 }

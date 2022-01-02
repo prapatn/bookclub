@@ -114,6 +114,7 @@ class _OurLoginFormState extends State<OurLoginForm> {
             child: Text("Don't have an accont? Sign up here"),
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
+          SizedBox(height: 10,),
           _googleButton(),
         ],
       ),

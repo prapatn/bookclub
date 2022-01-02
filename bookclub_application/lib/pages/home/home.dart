@@ -10,9 +10,10 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     CurrentUser _currentUser =
                     Provider.of<CurrentUser>(context, listen: false);
+        
     return Scaffold(
       appBar: AppBar(
-        title:  Text(_currentUser.getEmail!),
+        title:  Text("Home PAge"),
         actions: [
           IconButton(
               onPressed: () async {

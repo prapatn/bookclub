@@ -89,7 +89,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 if (_passwordController.text ==
                     _confirmpasswordController.text) {
                   _signUpUser(
-                      _emailController.text, _passwordController.text, context);
+                      _emailController.text, _passwordController.text, _fullNameController.text,context);
                 } else {
                   Scaffold.of(context).showSnackBar(const SnackBar(
                     content: Text("Password not macth"),
@@ -103,10 +103,10 @@ class _SignUpFormState extends State<SignUpForm> {
   }
 }
 
-void _signUpUser(String email, String password, BuildContext context) async {
+void _signUpUser(String email, String password,String fullName, BuildContext context) async {
   CurrentUser _currentUser = Provider.of<CurrentUser>(context, listen: false);
   try {
-    String _return = await _currentUser.signUpUser(email, password);
+    String _return = await _currentUser.signUpUser(email, password,fullName);
     if (_return=="success") {
       
       Navigator.pop(context);
