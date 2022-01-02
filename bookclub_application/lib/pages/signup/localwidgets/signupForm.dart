@@ -106,13 +106,16 @@ class _SignUpFormState extends State<SignUpForm> {
 void _signUpUser(String email, String password, BuildContext context) async {
   CurrentUser _currentUser = Provider.of<CurrentUser>(context, listen: false);
   try {
-    if (await _currentUser.signUpUser(email, password)) {
+    String _return = await _currentUser.signUpUser(email, password);
+    if (_return=="success") {
       
       Navigator.pop(context);
-      // Scaffold.of(context).showSnackBar(const SnackBar(
-      //   content: Text("Create new accont complate"),
-      //   duration: Duration(seconds: 3),
-      // ));
+     
+    }else{
+      Scaffold.of(context).showSnackBar( SnackBar(
+        content: Text(_return),
+        duration: const Duration(seconds: 3),
+      ));
     }
   } catch (e) {
     print(e);

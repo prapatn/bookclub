@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_auth:
   provider:
+  google_sign_in:
 
 
 dev_dependencies:
