@@ -24,10 +24,18 @@ class OurTheme {
         buttonTheme: ButtonThemeData(
             buttonColor: _darkGrey,
             padding: EdgeInsets.symmetric(horizontal: 20.0),
-            minWidth: 200,
+            minWidth: 150,
             height: 40.0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0),
-            )));
+            )),
+        appBarTheme: AppBarTheme(
+            color: _lightGreen,
+            titleTextStyle:
+                TextStyle(color: _darkGrey, fontWeight: FontWeight.bold,fontSize: 20.0),
+            //actionsIconTheme: IconThemeData(color:_darkGrey),
+            iconTheme: IconThemeData(color: _darkGrey),
+        )
+    );
   }
 }

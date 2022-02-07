@@ -141,8 +141,8 @@ void _loginUser(
     }
     
     if (_return == "success") {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => HomePage()));
+     Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) => HomePage()), (route) => false);
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text(_return!),
